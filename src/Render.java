@@ -44,8 +44,13 @@ public class Render {
     private final Canvas canvas;
     private final GraphicsContext gc;
     private List<int[]> currentCoordinates;
+    private int width;
+    private int height;
 
     public Render(double width, double height){
+
+        this.width = (int) width;
+        this.height = (int) height;
 
         root = new StackPane();
         canvas = new Canvas(width, height);
@@ -55,6 +60,13 @@ public class Render {
         gc = canvas.getGraphicsContext2D();
 
         currentCoordinates = new ArrayList<>();
+    }
+
+    public int getWidth(){
+        return width;
+    }
+    public int getHeight(){
+        return height;
     }
 
     public GraphicsContext getGC() {

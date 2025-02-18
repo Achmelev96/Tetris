@@ -12,7 +12,7 @@ public class Move {
 
     public void figureMoveDown(List<int[]> coordinates) {
 
-        if (logic.isAlowedDown()) {
+        if (logic.isAllowedDown(coordinates)) {
             for (int[] newcord : coordinates) {
                 newcord[1] += 1;
             }
@@ -22,7 +22,7 @@ public class Move {
 
     public void figureMoveRight(List<int[]> coordinates) {
 
-        if (logic.isAlowedRight()) {
+        if (logic.isAllowedRight(coordinates)) {
             for (int[] newcord : coordinates) {
                 newcord[0] += 1;
             }
@@ -32,9 +32,10 @@ public class Move {
 
     public void figureMoveLeft(List<int[]> coordinates) {
 
-        if (logic.isAlowedLeft()) {
+        if (logic.isAllowedLeft(coordinates)) {
             for (int[] newcord : coordinates) {
                 newcord[0] -= 1;
+
             }
         }
         render.setCurrentCoordinates(coordinates);

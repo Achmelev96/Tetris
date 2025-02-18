@@ -1,77 +1,100 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 public class Logic {
 
-    private List<int[]> coordinates;
-    private static boolean[][] grid;
+    private boolean[][] grid;
     private Render render;
 
     public Logic(Render render, int rows, int cols) {
         this.render = render;
-        this.coordinates = new ArrayList<>(render.getCurrentCoordinates());
-        this.grid = Main.getLogikMatrix(rows, cols);
+        this.grid = getLogikMatrix();
 
     }
 
-    public static boolean[][] getGrid() {
+    public boolean[][] getGrid() {
         return grid;
     }
 
-    public void figureMoveDown(List<int[]> coordinates) {
+    public boolean isAllowedDown(List<int[]> coordinates) {
+        getGrid();
 
-        if (isAlowedDown()) {
-            for (int[] newcord : coordinates) {
-                newcord[1] += 1;
+        Map<Integer, int[]> bottom = new HashMap<>();
+
+        for (int[] p : coordinates) {
+            int row = p[0];
+            int col = p[1];
+
+            if (!bottom.containsKey(col) || row > bottom.get(col)[0]) {
+                bottom.put(col, p);
             }
         }
-        render.setCurrentCoordinates(coordinates);
-    }
 
-    public void figureMoveRight(List<int[]> coordinates) {
+        for (Map.Entry<Integer, int[]> entry : bottom.entrySet()) {
+            int[] bottomPoint = entry.getValue();
+            int row = bottomPoint[0];
+            int col = bottomPoint[1] + 1;
 
-        if (isAlowedRight()) {
-            for (int[] newcord : coordinates) {
-                newcord[0] += 1;
-            }
-        }
-        render.setCurrentCoordinates(coordinates);
-    }
-
-    public void figureMoveLeft(List<int[]> coordinates) {
-
-        if (isAlowedLeft()) {
-            for (int[] newcord : coordinates) {
-                newcord[0] -= 1;
-            }
-        }
-        render.setCurrentCoordinates(coordinates);
-    }
-
-    public boolean isAlowedDown(){
-
-        List<int[]> lower = getLowerCoordinates();
-
-        for (int point[] : lower) {
-
-            int row = point[0];
-            int col = point[1];
-
-            if (row >= grid.length){
+            if (col >= 40 || !grid[row][col])
                 return false;
-            }
-
-            if (!grid[row+1][col]){
-                return false;
-            }
         }
         return true;
     }
 
-    public  List<int[]> getLowerCoordinates(){
+    public boolean isAllowedRight(List<int[]> coordinates) {
+        getGrid();
+
+        Map<Integer, int[]> right = new HashMap<>();
+
+        for (int[] p : coordinates) {
+            int row = p[0];
+            int col = p[1];
+
+            if (!right.containsKey(row) || col > right.get(row)[1]) {
+                right.put(row, p);
+            }
+        }
+
+        for (Map.Entry<Integer, int[]> entry : right.entrySet()) {
+            int[] rightmostPoint = entry.getValue();
+            int row = rightmostPoint[0] + 1;
+            int col = rightmostPoint[1];
+
+            if (row >= 20 || !grid[row][col])
+                return false;
+        }
+        return true;
+    }
+
+    public boolean isAllowedLeft(List <int[]> coordinates){
+        getGrid();
+
+        Map<Integer, int[]> left = new HashMap<>();
+
+        for (int[] p : coordinates){
+            int row = p[0];
+            int col = p[1];
+
+            if (!left.containsKey(row) || col < left.get(row)[1]) {
+                left.put(row, p);
+            }
+        }
+
+        for (Map.Entry<Integer, int[]> entry : left.entrySet()) {
+            int[] leftmostPoint = entry.getValue();
+            int row = leftmostPoint[0] - 1;
+            int col = leftmostPoint[1];
+
+            if (row < 0 || !grid[row][col])
+                return false;
+        }
+        return true;
+    }
+
+    public  List<int[]> getLowerCoordinates(List <int[]> coordinates) {
 
         List<int[]> lowerCoordinates = new ArrayList<>();
-        //List<int[]> figure = Render.getCoordinats(Render.getFigure());
         int maxRow = Integer.MIN_VALUE;
 
         for (int[] i : coordinates){
@@ -89,10 +112,9 @@ public class Logic {
         return lowerCoordinates;
     }
 
-    public List<int[]> getRightCoordinates(){
+    public List<int[]> getRightCoordinates(List <int[]> coordinates){
 
         List<int[]> rightCoordinates = new ArrayList<>();
-        //List<int[]> figure = Render.getCoordinats(Render.getFigure());
         int rightRow = Integer.MIN_VALUE;
 
         for (int[] i : coordinates){
@@ -109,27 +131,7 @@ public class Logic {
         return rightCoordinates;
     }
 
-    public boolean isAlowedRight(){
-
-        List<int[]> right = getRightCoordinates();
-
-        for (int point[] : right) {
-
-            int row = point[0];
-            int col = point[1];
-
-            if (col >= grid[0].length){
-                return false;
-            }
-
-            if (!grid[row][col+1]){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public List<int[]> getLeftCoordinates(){
+    public List<int[]> getLeftCoordinates(List <int[]> coordinates){
 
         List<int[]> leftCoordinates = new ArrayList<>();
         //List<int[]> figure = Render.getCoordinats(Render.getFigure());
@@ -149,60 +151,19 @@ public class Logic {
         return leftCoordinates;
     }
 
-    public boolean isAlowedLeft(){
+    public boolean[][] getLogikMatrix() {
 
-        List<int[]> left = getLeftCoordinates();
+        int rows = render.getWidth() / 20;
+        int cols = render.getHeight() / 20;
 
-        for (int point[] : left) {
+        boolean[][] matrix = new boolean[rows][cols];
 
-            int row = point[0];
-            int col = point[1];
-
-            if (col - 1 < 0){
-                return false;
-            }
-
-            if (!grid[row][col-1]){
-                return false;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                matrix[i][j] = true;
             }
         }
-        return true;
-    }
 
-    public void rotate90(List<int[]> coordinates) {
-        //if (isAllowedRotation()) {
-            int[] center = findCenter(coordinates);
-            int cx = center[0];
-            int cy = center[1];
-
-            for (int[] coord : coordinates) {
-                int x = coord[0] - cx;
-                int y = coord[1] - cy;
-
-                int newX = y;
-                int newY = -x;
-
-                coord[0] = newX + cx;
-                coord[1] = newY + cy;
-            //}
-        }
-
-        render.setCurrentCoordinates(coordinates);
-    }
-
-    public int[] findCenter(List<int[]> coordinates) {
-        int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-        int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-
-        for (int[] coord : coordinates) {
-            minX = Math.min(minX, coord[0]);
-            maxX = Math.max(maxX, coord[0]);
-            minY = Math.min(minY, coord[1]);
-            maxY = Math.max(maxY, coord[1]);
-        }
-
-        int centerX = (minX + maxX) / 2;
-        int centerY = (minY + maxY) / 2;
-        return new int[] { centerX, centerY };
+        return matrix;
     }
 }

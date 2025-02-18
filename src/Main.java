@@ -10,9 +10,9 @@ import java.util.List;
 
 public class Main extends Application {
 
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 800;
-    private static final int BLOCK_SIZE = 20;
+    public static final int WIDTH = 400;
+    public static final int HEIGHT = 800;
+    public static final int BLOCK_SIZE = 20;
 
     @Override
     public void start(Stage primaryStage) {
@@ -20,9 +20,11 @@ public class Main extends Application {
         Render render = new Render(WIDTH,HEIGHT);
         render.getCanvas();
 
-        Logic logic = new Logic(render, WIDTH/BLOCK_SIZE,HEIGHT/BLOCK_SIZE );
+        Logic logic = new Logic(render, WIDTH/BLOCK_SIZE,HEIGHT/BLOCK_SIZE);
 
         Move move = new Move(render, logic);
+
+        // RX Java
 
         GraphicsContext gc = render.getGC();
 
@@ -41,60 +43,35 @@ public class Main extends Application {
 
         render.setCurrentCoordinates(figure); // Saving the current coordinates
 
-        /*for (int[] j : figure){
-            System.out.println("X: " + j[0] + ", Y: " + j[1]);
-        }*/
-
-        //render.clearCanvas();
         render.drawBlock(render.getCurrentCoordinates(), BLOCK_SIZE, color);
-
 
         scene.setOnKeyPressed(key -> {
             System.out.println("Key pressed: " + key.getCode());
             switch (key.getCode()){
                case LEFT -> {
-                   render.drawBlock(render.getCurrentCoordinates(), BLOCK_SIZE, color.BLACK);
-                   move.figureMoveLeft(render.getCurrentCoordinates());
+                       render.drawBlock(render.getCurrentCoordinates(), BLOCK_SIZE, color.BLACK);
+                       move.figureMoveLeft(render.getCurrentCoordinates());
                }
                case RIGHT -> {
-                   render.drawBlock(render.getCurrentCoordinates(), BLOCK_SIZE, color.BLACK);
-                   move.figureMoveRight(render.getCurrentCoordinates());
+                       render.drawBlock(render.getCurrentCoordinates(), BLOCK_SIZE, color.BLACK);
+                       move.figureMoveRight(render.getCurrentCoordinates());
                }
                case F -> {
                    render.drawBlock(render.getCurrentCoordinates(), BLOCK_SIZE, color.BLACK);
                    move.rotate90(render.getCurrentCoordinates());
                }
                case DOWN ->{
-                   render.drawBlock(render.getCurrentCoordinates(), BLOCK_SIZE, color.BLACK);
-                   move.figureMoveDown(render.getCurrentCoordinates());
+                       render.drawBlock(render.getCurrentCoordinates(), BLOCK_SIZE, color.BLACK);
+                       move.figureMoveDown(render.getCurrentCoordinates());
                }
             }
-            /*for (int[] j : figure){
-            System.out.println("X: " + j[0] + ", Y: " + j[1]);
-        }*/
-            render.getCurrentCoordinates();
-           //render.getCanvas();
+            //render.getCurrentCoordinates();
             render.drawBlock(render.getCurrentCoordinates(), BLOCK_SIZE, color);
-            //render.setCurrentCoordinates(figure);
+
         });
     }
     public static void main(String[] args) {
         launch(args);
     }
 
-    public static boolean[][] getLogikMatrix(int width, int height){
-
-        int rows = width / BLOCK_SIZE;
-        int cols = height / BLOCK_SIZE;
-
-        boolean[][] matrix = new boolean[rows][cols];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                matrix[i][j] = true;
-            }
-        }
-
-        return matrix;
-    }
 }
