@@ -1,6 +1,6 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
+import javafx.scene.paint.Color;
 
 public class Logic {
 
@@ -15,6 +15,24 @@ public class Logic {
 
     public boolean[][] getGrid() {
         return grid;
+    }
+
+    public void setGrid(boolean[][] grid) {
+        this.grid = grid;
+    }
+
+    public void setNewGrid(List <int[]> coordinates, Color color){
+        getGrid();
+
+        for (int[] coord : coordinates){
+            int x = coord[0];
+            int y = coord[1];
+
+            grid[x][y] = false;
+        }
+        setGrid(grid);
+
+        render.drawBlock(render.getCurrentCoordinates(), Main.BLOCK_SIZE, color);
     }
 
     public boolean isAllowedDown(List<int[]> coordinates) {
@@ -90,65 +108,6 @@ public class Logic {
                 return false;
         }
         return true;
-    }
-
-    public  List<int[]> getLowerCoordinates(List <int[]> coordinates) {
-
-        List<int[]> lowerCoordinates = new ArrayList<>();
-        int maxRow = Integer.MIN_VALUE;
-
-        for (int[] i : coordinates){
-            if (i[0] > maxRow){
-                maxRow = i[0];
-            }
-        }
-
-        for (int[] i : coordinates){
-            if (i[0] == maxRow){
-                lowerCoordinates.add(i);
-            }
-        }
-
-        return lowerCoordinates;
-    }
-
-    public List<int[]> getRightCoordinates(List <int[]> coordinates){
-
-        List<int[]> rightCoordinates = new ArrayList<>();
-        int rightRow = Integer.MIN_VALUE;
-
-        for (int[] i : coordinates){
-            if (i[1] > rightRow){
-                rightRow = i[1];
-            }
-        }
-
-        for (int[] i : coordinates){
-            if (i[1] == rightRow){
-                rightCoordinates.add(i);
-            }
-        }
-        return rightCoordinates;
-    }
-
-    public List<int[]> getLeftCoordinates(List <int[]> coordinates){
-
-        List<int[]> leftCoordinates = new ArrayList<>();
-        //List<int[]> figure = Render.getCoordinats(Render.getFigure());
-        int leftRow = Integer.MIN_VALUE;
-
-        for (int[] i : coordinates) {
-            if (i[1] < leftRow){
-                leftRow = i[1];
-            }
-        }
-
-        for (int[] i : coordinates){
-            if (i[1] == leftRow){
-                leftCoordinates.add(i);
-            }
-        }
-        return leftCoordinates;
     }
 
     public boolean[][] getLogikMatrix() {
