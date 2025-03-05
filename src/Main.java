@@ -22,17 +22,17 @@ public class Main extends Application {
         Move move = new Move(render, logic);
         GraphicsContext gc = render.getGC();
         Scene scene = new Scene(render.getRoot(), WIDTH,HEIGHT);
-        CUnits cUnits = new CUnits(render,logic, move);
+        CUnits controlUnits = new CUnits(render,logic, move);
 
         primaryStage.setTitle("Tetris");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        cUnits.startNewRound();
+        controlUnits.startNewRound();
 
-        scene.setOnKeyPressed((KeyEvent event) -> cUnits.keyPressed(event, BLOCK_SIZE));
+        scene.setOnKeyPressed((KeyEvent event) -> controlUnits.keyPressed(event, BLOCK_SIZE));
 
-        primaryStage.setOnCloseRequest(event -> cUnits.fallEnd());
+        primaryStage.setOnCloseRequest(event -> controlUnits.fallEnd());
 
     }
 
