@@ -3,7 +3,6 @@ import javafx.animation.Timeline;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-
 import java.util.List;
 
 public class CUnits {

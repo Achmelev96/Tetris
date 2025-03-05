@@ -4,9 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
 import javafx.scene.canvas.GraphicsContext;
-import java.util.List;
 
 public class Main extends Application {
 
