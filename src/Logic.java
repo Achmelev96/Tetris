@@ -6,10 +6,13 @@ public class Logic {
 
     private boolean[][] grid;
     private Render render;
+    private Color[][] colorGrid;
 
     public Logic(Render render, int rows, int cols) {
+
         this.render = render;
         this.grid = getLogikMatrix();
+        this.colorGrid = new Color[rows][cols];
 
     }
 
@@ -21,7 +24,7 @@ public class Logic {
         this.grid = grid;
     }
 
-    public void setNewGrid(List <int[]> coordinates, Color color){
+    public void fixinGrid(List <int[]> coordinates, Color color){
         getGrid();
 
         for (int[] coord : coordinates){
@@ -29,10 +32,51 @@ public class Logic {
             int y = coord[1];
 
             grid[x][y] = false;
+            colorGrid[x][y] = color;
         }
         setGrid(grid);
 
-        render.drawBlock(render.getCurrentCoordinates(), Main.BLOCK_SIZE, color);
+        render.drawBlock(render.getCurrentCoordinates(), color);
+    }
+
+    public Color[][] getColorGrid(){
+        return colorGrid;
+    }
+
+    public void clearLine(int x){
+
+        if (x == -1) return;
+
+        for (int i = 0; i < grid.length; i++){
+            grid[i][x] = true;
+            colorGrid[i][x] = null;
+        }
+    }
+
+    public void shiftDown(int x){
+        if (x == -1) return;
+
+        /*for (int i = x; i > 0; i--){
+            grid[i] = Arrays.copyOf(grid[i-1], grid[i-1].length);
+            colorGrid[i] = Arrays.copyOf(colorGrid[i-1], colorGrid[i-1].length);
+        }
+
+        Arrays.fill(grid[0], true);
+        Arrays.fill(colorGrid[0], null);
+        */
+        for (int i = x; i > 0; i--){
+            for (int j = 0; j < grid.length; j++){
+                grid[j][i] = grid[j][i-1];
+                colorGrid[j][i] = colorGrid[j][i-1];
+            }
+        }
+
+        for (int i = 0; i < grid.length; i++){
+            grid [i][0] = true;
+            colorGrid[i][0] = null;
+        }
+
+        render.redrawGrid(grid, colorGrid);
     }
 
     public boolean isAllowedDown(List<int[]> coordinates) {
@@ -110,10 +154,25 @@ public class Logic {
         return true;
     }
 
+    public int isLinefull(){
+
+        for (int i = grid[0].length - 1; i >= 0; i--) {
+            boolean flag = true;
+            for (int j = 0; j < grid.length; j++) {
+                if (!grid[j][i]) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) return i;
+        }
+        return -1;
+    }
+
     public boolean[][] getLogikMatrix() {
 
-        int rows = render.getWidth() / 20;
-        int cols = render.getHeight() / 20;
+        int rows = render.getWidth() / render.getBlockSize();
+        int cols = render.getHeight() / render.getBlockSize();
 
         boolean[][] matrix = new boolean[rows][cols];
 

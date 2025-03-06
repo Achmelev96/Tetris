@@ -46,11 +46,13 @@ public class Render {
     private List<int[]> currentCoordinates;
     private int width;
     private int height;
+    private int blockSize;
 
-    public Render(double width, double height){
+    public Render(double width, double height, int blockSize) {
 
         this.width = (int) width;
         this.height = (int) height;
+        this.blockSize = blockSize;
 
         root = new StackPane();
         canvas = new Canvas(width, height);
@@ -65,8 +67,13 @@ public class Render {
     public int getWidth(){
         return width;
     }
+
     public int getHeight(){
         return height;
+    }
+
+    public int getBlockSize(){
+        return blockSize;
     }
 
     public GraphicsContext getGC() {
@@ -88,13 +95,13 @@ public class Render {
         this.currentCoordinates = coordinates;
     }
 
-    public void drawBlock(List<int[]> coordinates, int size, Color color) {
+    public void drawBlock(List<int[]> coordinates, Color color) {
 
         gc.setFill(color);
         for (int draw[] : coordinates) {
             int x = draw[0];
             int y = draw[1];
-            gc.fillRect(x*size, y*size, size, size);
+            gc.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
 
         }
     }
@@ -125,16 +132,19 @@ public class Render {
         };
     } // set a concrete Figure from Block 1-5
 
-    /*public void clearPlace(List<int[]> coordinates) {
+    public void redrawGrid(boolean[][] grid, Color[][] colorGrid) {
 
-        gc.setFill(Color.BLACK);
-        for (int draw[] : coordinates) {
-            int x = draw[0];
-            int y = draw[1];
-            gc.fillRect(x*20, y*20, 20, 20);
+        getCanvas();
 
+        for (int i = 0; i < grid.length; i++) {
+            for(int j = 0; j < grid[1].length; j++){
+                if(grid[i][j]) {
+                    gc.setFill(colorGrid[i][j]);
+                    gc.fillRect(i * blockSize, j * blockSize, blockSize, blockSize);
+                }
+            }
         }
-    }*/
+    }
 
     public static Color getColor(boolean[][] block){
 

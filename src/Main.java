@@ -15,7 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        Render render = new Render(WIDTH,HEIGHT);
+        Render render = new Render(WIDTH, HEIGHT, BLOCK_SIZE);
         render.getCanvas();
 
         Logic logic = new Logic(render, WIDTH/BLOCK_SIZE,HEIGHT/BLOCK_SIZE);
@@ -30,7 +30,8 @@ public class Main extends Application {
 
         controlUnits.startNewRound();
 
-        scene.setOnKeyPressed((KeyEvent event) -> controlUnits.keyPressed(event, BLOCK_SIZE));
+        scene.setOnKeyPressed((KeyEvent event) -> controlUnits.keyPressed(event));
+        scene.setOnKeyReleased((KeyEvent event) -> controlUnits.keyReleased(event));
 
         primaryStage.setOnCloseRequest(event -> controlUnits.fallEnd());
 

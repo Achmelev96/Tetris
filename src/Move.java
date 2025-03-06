@@ -35,7 +35,6 @@ public class Move {
         if (logic.isAllowedLeft(coordinates)) {
             for (int[] newcord : coordinates) {
                 newcord[0] -= 1;
-
             }
         }
         render.setCurrentCoordinates(coordinates);
