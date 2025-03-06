@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.ArrayList;
 
 public class Move {
 
@@ -41,11 +42,12 @@ public class Move {
     }
 
     public void rotate90(List<int[]> coordinates) {
-        //if (logic.isAllowedRotation()) {
+
         int[] center = findCenter(coordinates);
         int cx = center[0];
         int cy = center[1];
 
+        List<int[]> rotatedCoords = new ArrayList<>();
         for (int[] coord : coordinates) {
             int x = coord[0] - cx;
             int y = coord[1] - cy;
@@ -55,7 +57,26 @@ public class Move {
 
             coord[0] = newX + cx;
             coord[1] = newY + cy;
-            //}
+
+            rotatedCoords.add(new int[]{newX + cx, newY + cy});
+        }
+
+        int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+        for (int[] coord : rotatedCoords) {
+            minX = Math.min(minX, coord[0]);
+            maxX = Math.max(maxX, coord[0]);
+        }
+
+        int shiftX = 0;
+        if (minX < 0) {
+            shiftX = -minX;
+        } else if (maxX >= render.getWidth() / render.getBlockSize()) {
+            shiftX = (render.getWidth() / render.getBlockSize() - 1) - maxX;
+        }
+
+        for (int i = 0; i < coordinates.size(); i++) {
+            coordinates.get(i)[0] = rotatedCoords.get(i)[0] + shiftX;
+            coordinates.get(i)[1] = rotatedCoords.get(i)[1];
         }
 
         render.setCurrentCoordinates(coordinates);

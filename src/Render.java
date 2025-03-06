@@ -76,10 +76,6 @@ public class Render {
         return blockSize;
     }
 
-    public GraphicsContext getGC() {
-        return gc;
-    }
-
     public void getCanvas(){
 
         gc.setFill(Color.BLACK);
@@ -104,6 +100,12 @@ public class Render {
             gc.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
 
         }
+    }
+
+    public void textDraw(String text, Color color) {
+        gc.setFill(color);
+        gc.setFont(new javafx.scene.text.Font(50));
+        gc.fillText(text, width / 6, height / 2);
     }
 
     public static List<int[]> getFigure(boolean[][] figure){
@@ -133,12 +135,11 @@ public class Render {
     } // set a concrete Figure from Block 1-5
 
     public void redrawGrid(boolean[][] grid, Color[][] colorGrid) {
-
         getCanvas();
 
         for (int i = 0; i < grid.length; i++) {
             for(int j = 0; j < grid[1].length; j++){
-                if(grid[i][j]) {
+                if(!grid[i][j]) {
                     gc.setFill(colorGrid[i][j]);
                     gc.fillRect(i * blockSize, j * blockSize, blockSize, blockSize);
                 }
