@@ -1,3 +1,4 @@
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
@@ -48,6 +49,7 @@ public class Render {
     private int height;
     private int blockSize;
 
+    // Responsible for rendering and working with the visual part
     public Render(double width, double height, int blockSize) {
 
         this.width = (int) width;
@@ -100,12 +102,18 @@ public class Render {
             gc.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
 
         }
-    }
+    } // Draws a figure in blocks from the received coordinates
 
-    public void textDraw(String text, Color color) {
+    public void gameOver(String text, Color color) {
         gc.setFill(color);
-        gc.setFont(new javafx.scene.text.Font(50));
+        gc.setFont(new javafx.scene.text.Font(width / 8));
         gc.fillText(text, width / 6, height / 2);
+    } // Displays the text
+
+    public void restart(String text, Color color){
+        gc.setFill(color);
+        gc.setFont(new javafx.scene.text.Font(width / 15));
+        gc.fillText(text, width / 6, height / 1.7);
     }
 
     public static List<int[]> getFigure(boolean[][] figure){
@@ -145,7 +153,7 @@ public class Render {
                 }
             }
         }
-    }
+    } // Redraws the current canvas state.
 
     public static Color getColor(boolean[][] block){
 
@@ -154,7 +162,7 @@ public class Render {
         if (Arrays.deepEquals(block, Block_3)) return Color.GREEN;
         if (Arrays.deepEquals(block, Block_4)) return Color.YELLOW;
         return Color.PURPLE;
-    }
+    } // Returns the color for a given shape.
 
     public StackPane getRoot(){
         return root;

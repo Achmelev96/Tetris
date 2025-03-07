@@ -1,3 +1,4 @@
+
 import java.util.List;
 import javafx.scene.paint.Color;
 
@@ -7,6 +8,7 @@ public class Logic {
     private Render render;
     private Color[][] colorGrid;
 
+    // Responsible for checking, storing grids and block fixation
     public Logic(Render render, int rows, int cols) {
 
         this.render = render;
@@ -19,12 +21,12 @@ public class Logic {
         return grid;
     }
 
-    /*public void setGrid(boolean[][] grid) {
-        this.grid = grid;
-    }*/
+    public void resetGrid() { // Resetting the state of the grids
+        this.grid = getLogikMatrix();
+        this.colorGrid = new Color[grid.length][grid[0].length];
+    }
 
     public void fixInGrid(List <int[]> coordinates, Color color){
-        //getGrid();
 
         for (int[] coord : coordinates){
             int x = coord[0];
@@ -33,10 +35,9 @@ public class Logic {
             grid[x][y] = false;
             colorGrid[x][y] = color;
         }
-        //setGrid(grid);
 
         render.drawBlock(render.getCurrentCoordinates(), color);
-    }
+    } // fixes the figure in the grid
 
     public Color[][] getColorGrid(){
         return colorGrid;
@@ -50,7 +51,7 @@ public class Logic {
             grid[i][x] = true;
             colorGrid[i][x] = null;
         }
-    }
+    } // Clears the line by the received row number
 
     public void shiftDown(int x){
         if (x == -1) return;
@@ -68,7 +69,7 @@ public class Logic {
         }
 
         render.redrawGrid(grid, colorGrid);
-    }
+    } // Gets the row number. Shifts everything above it one row down
 
     public boolean isAllowedDown(List<int[]> coordinates) {
         getGrid();
@@ -112,7 +113,7 @@ public class Logic {
         return true;
     }
 
-    public boolean[][] getLogikMatrix() {
+    public boolean[][] getLogikMatrix(){
 
         int rows = render.getWidth() / render.getBlockSize();
         int cols = render.getHeight() / render.getBlockSize();
@@ -126,7 +127,7 @@ public class Logic {
         }
 
         return matrix;
-    }
+    } // Returns an empty logical matrix where "True" is an empty cell
 
     public boolean isGameOver(List<int[]> newFigure) {
         for (int[] coord : newFigure) {

@@ -1,3 +1,4 @@
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -6,6 +7,7 @@ public class Move {
     private Render render;
     private Logic logic;
 
+    // Responsible for the movement of figures and rotation
     public Move(Render render, Logic logic) {
         this.render = render;
         this.logic = logic;
@@ -61,6 +63,7 @@ public class Move {
             rotatedCoords.add(new int[]{newX + cx, newY + cy});
         }
 
+        // Protection against out-of-bounds
         int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
         for (int[] coord : rotatedCoords) {
             minX = Math.min(minX, coord[0]);
@@ -83,6 +86,7 @@ public class Move {
     }
 
     private int[] findCenter(List<int[]> coordinates) {
+
         int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
         int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
 
@@ -96,5 +100,5 @@ public class Move {
         int centerX = (minX + maxX) / 2;
         int centerY = (minY + maxY) / 2;
         return new int[] { centerX, centerY };
-    }
+    } // Auxiliary method for rotate90
 }

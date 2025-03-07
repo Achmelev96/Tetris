@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.scene.control.Button;
 
 public class Main extends Application {
 
@@ -32,7 +33,6 @@ public class Main extends Application {
         scene.setOnKeyReleased((KeyEvent event) -> controlUnits.keyReleased(event));
 
         primaryStage.setOnCloseRequest(event -> controlUnits.fallEnd());
-
     }
 
     public static void main(String[] args) {
