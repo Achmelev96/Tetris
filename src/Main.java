@@ -14,13 +14,15 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        Grid grid = new Grid(HEIGHT/BLOCK_SIZE, WIDTH/BLOCK_SIZE);
+
         Render render = new Render(WIDTH, HEIGHT, BLOCK_SIZE);
         render.getCanvas();
 
-        Logic logic = new Logic(render, WIDTH/BLOCK_SIZE,HEIGHT/BLOCK_SIZE);
-        Move move = new Move(render, logic);
-        Scene scene = new Scene(render.getRoot(), WIDTH,HEIGHT);
-        ControlUnits controlUnits = new ControlUnits(render, logic, move);
+        Logic logic = new Logic();
+        Move move = new Move();
+        Scene scene = new Scene(render.getRoot(), WIDTH, HEIGHT);
+        ControlUnits controlUnits = new ControlUnits(grid, render, logic, move);
 
         primaryStage.setTitle("Tetris");
         primaryStage.setScene(scene);

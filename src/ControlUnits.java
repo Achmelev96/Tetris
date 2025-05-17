@@ -1,4 +1,3 @@
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.input.KeyCode;
@@ -13,16 +12,23 @@ public class ControlUnits {
     private Render render;
     private Logic logic;
     private Move move;
+    private Grid grid;
     private Timeline timeline;
     private Color currentColor;
-    private final int speed = 800;
+    private final int GameSpeed = 800;
     private final int boost = 50;
     private boolean gameOver = false;
+    private boolean[][] gameGrid = grid.getGrid();;
+    private List<int[]> figureCoordinates;
+    private Color[][] colorGrid = grid.getColors();;
 
-    public ControlUnits(Render render, Logic logic, Move move) {
+    public ControlUnits(Grid grid, Render render, Logic logic, Move move) {
         this.render = render;
         this.logic = logic;
         this.move = move;
+        this.grid = grid;
+        //gameGrid = grid.getGrid();
+        //colorGrid = grid.getColors();
     }
 
     public void keyPressed(KeyEvent event){
@@ -30,9 +36,18 @@ public class ControlUnits {
         render.drawBlock(render.getCurrentCoordinates(), Color.BLACK);
 
         switch (event.getCode()) {
-            case LEFT -> move.figureMoveLeft(render.getCurrentCoordinates());
-            case RIGHT -> move.figureMoveRight(render.getCurrentCoordinates());
-            case SPACE -> move.rotate90(render.getCurrentCoordinates());
+            case LEFT -> {
+                figureCoordinates = move.figureMoveLeft(gameGrid, render.getCurrentCoordinates());
+                render.setCurrentCoordinates(figureCoordinates);
+            }
+            case RIGHT -> {
+                figureCoordinates = move.figureMoveRight(gameGrid, render.getCurrentCoordinates());
+                render.setCurrentCoordinates(figureCoordinates);
+            }
+            case SPACE -> {
+                figureCoordinates = move.rotate90(grid.getRows(), grid.getCols() ,render.getCurrentCoordinates());
+                render.setCurrentCoordinates(figureCoordinates);
+            }
             case DOWN -> timeline.setRate(800.0 / boost);
             case ENTER -> restartGame();
 
@@ -43,7 +58,7 @@ public class ControlUnits {
 
     public void keyReleased(KeyEvent event){
         if (event.getCode() == KeyCode.DOWN && timeline != null) {
-            timeline.setRate(800.0 / speed);
+            timeline.setRate(800.0 / GameSpeed);
         }
     } // Returns speed to normal after releasing "DOWN"
 
@@ -53,12 +68,13 @@ public class ControlUnits {
             timeline = new Timeline(new KeyFrame(Duration.millis(speed), event -> {
                 render.drawBlock(render.getCurrentCoordinates(), Color.BLACK);
 
-                if (!logic.isAllowedDown(render.getCurrentCoordinates())){
+                if (!Logic.isAllowedDown(gameGrid, render.getCurrentCoordinates())){
                     timeline.stop();
                     onNextRound.run();
                     return;
                 }
-                move.figureMoveDown(render.getCurrentCoordinates());
+                figureCoordinates = move.figureMoveDown(gameGrid, figureCoordinates);
+                render.setCurrentCoordinates(figureCoordinates);
                 render.drawBlock(render.getCurrentCoordinates(), color);
             }));
 
@@ -79,10 +95,10 @@ public class ControlUnits {
         Color color = Render.getColor(setFigure); // get a Color for certain Figure
 
         for (int[] i : figure){
-            i[0] = i[0] + ((render.getWidth()/render.getBlockSize())/2);
+            i[0] = i[0] + (grid.getRows()/*(render.getWidth()/render.getBlockSize())*//2);
         }
 
-        if (logic.isGameOver(figure)){
+        if (logic.isGameOver(gameGrid,figure)){
             gameOver = true;
             render.gameOver("GAME OVER", Color.WHITE);
             render.restart("Press ENTER to restart", Color.WHITE);
@@ -93,21 +109,22 @@ public class ControlUnits {
         render.setCurrentCoordinates(figure); // Saving the current coordinates
         render.drawBlock(render.getCurrentCoordinates(), color);
 
-        fallStart(color, speed, this::nextRound);
+        fallStart(color, GameSpeed, this::nextRound);
     } // launches a new figure and checks for game over
 
     public void nextRound(){
-        logic.fixInGrid(render.getCurrentCoordinates(), currentColor);
+        grid.fixInGrid(render.getCurrentCoordinates(), currentColor);
+        render.drawBlock(render.getCurrentCoordinates(), currentColor);
         checkAndClear();
         startNewRound();
     } // Fixes the current figure, checks for filled rows and calls the next figure
 
     private void checkAndClear(){
         int full;
-        while ((full = isLinefull(logic.getGrid())) != -1){
-            logic.clearLine(full);
-            logic.shiftDown(full);
-            render.redrawGrid(logic.getGrid(), logic.getColorGrid());
+        while ((full = isLinefull(gameGrid/*logic.getGrid()*/)) != -1){
+            grid.clearLine(full);
+            grid.shiftDown(full);
+            render.redrawGrid(gameGrid, colorGrid);
         }
     } // Filled Rows Check Block
 
@@ -115,7 +132,7 @@ public class ControlUnits {
         if (!gameOver) return;
 
         gameOver = false;
-        logic.resetGrid();
+        grid.setNewGrid();
         render.getCanvas();
         startNewRound();
     } // Restarts the game

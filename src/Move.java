@@ -1,49 +1,38 @@
-
 import java.util.List;
 import java.util.ArrayList;
 
 public class Move {
 
-    private Render render;
-    private Logic logic;
-
     // Responsible for the movement of figures and rotation
-    public Move(Render render, Logic logic) {
-        this.render = render;
-        this.logic = logic;
-    }
 
-    public void figureMoveDown(List<int[]> coordinates) {
-
-        if (logic.isAllowedDown(coordinates)) {
+    public List<int[]> figureMoveDown(boolean[][] grid, List<int[]> coordinates) {
+        if (Logic.isAllowedDown(grid, coordinates)) {
             for (int[] newcord : coordinates) {
                 newcord[1] += 1;
             }
         }
-        render.setCurrentCoordinates(coordinates);
+        return coordinates;
     }
 
-    public void figureMoveRight(List<int[]> coordinates) {
-
-        if (logic.isAllowedRight(coordinates)) {
+    public List<int[]> figureMoveRight(boolean[][] grid, List<int[]> coordinates) {
+        if (Logic.isAllowedRight(grid, coordinates)) {
             for (int[] newcord : coordinates) {
                 newcord[0] += 1;
             }
         }
-        render.setCurrentCoordinates(coordinates);
+        return coordinates;
     }
 
-    public void figureMoveLeft(List<int[]> coordinates) {
-
-        if (logic.isAllowedLeft(coordinates)) {
+    public List<int[]> figureMoveLeft(boolean[][] grid, List<int[]> coordinates) {
+        if (Logic.isAllowedLeft(grid, coordinates)) {
             for (int[] newcord : coordinates) {
                 newcord[0] -= 1;
             }
         }
-        render.setCurrentCoordinates(coordinates);
+        return coordinates;
     }
 
-    public void rotate90(List<int[]> coordinates) {
+    public List<int[]> rotate90(int rows, int cols, List<int[]> coordinates) {
 
         int[] center = findCenter(coordinates);
         int cx = center[0];
@@ -73,8 +62,8 @@ public class Move {
         int shiftX = 0;
         if (minX < 0) {
             shiftX = -minX;
-        } else if (maxX >= render.getWidth() / render.getBlockSize()) {
-            shiftX = (render.getWidth() / render.getBlockSize() - 1) - maxX;
+        } else if (maxX >= rows/*render.getWidth() / render.getBlockSize()*/) {
+            shiftX = (cols/*render.getWidth() / render.getBlockSize()*/ - 1) - maxX;
         }
 
         for (int i = 0; i < coordinates.size(); i++) {
@@ -82,7 +71,7 @@ public class Move {
             coordinates.get(i)[1] = rotatedCoords.get(i)[1];
         }
 
-        render.setCurrentCoordinates(coordinates);
+        return coordinates;
     }
 
     private int[] findCenter(List<int[]> coordinates) {

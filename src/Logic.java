@@ -1,32 +1,32 @@
 
 import java.util.List;
-import javafx.scene.paint.Color;
+//import javafx.scene.paint.Color;
 
 public class Logic {
 
-    private boolean[][] grid;
+    /*public boolean[][] grid;
     private Render render;
-    private Color[][] colorGrid;
+    private Color[][] colorGrid;*/
 
     // Responsible for checking, storing grids and block fixation
-    public Logic(Render render, int rows, int cols) {
+    /*public Logic(Render render, int rows, int cols) {
 
         this.render = render;
-        this.grid = getLogikMatrix();
+        this.grid = getLogicMatrix();
         this.colorGrid = new Color[rows][cols];
 
-    }
+    }*/
 
-    public boolean[][] getGrid() {
+    /*public boolean[][] getGrid() {
         return grid;
-    }
+    }*/
 
-    public void resetGrid() { // Resetting the state of the grids
-        this.grid = getLogikMatrix();
+    /*public void resetGrid() { // Resetting the state of the grids
+        this.grid = getLogicMatrix();
         this.colorGrid = new Color[grid.length][grid[0].length];
-    }
+    }*/
 
-    public void fixInGrid(List <int[]> coordinates, Color color){
+    /*public void fixInGrid(List <int[]> coordinates, Color color){
 
         for (int[] coord : coordinates){
             int x = coord[0];
@@ -37,13 +37,13 @@ public class Logic {
         }
 
         render.drawBlock(render.getCurrentCoordinates(), color);
-    } // fixes the figure in the grid
+    } */ // fixes the figure in the grid
 
-    public Color[][] getColorGrid(){
+    /*public Color[][] getColorGrid(){
         return colorGrid;
-    }
+    }*/
 
-    public void clearLine(int x){
+    /*public void clearLine(int x){
 
         if (x == -1) return;
 
@@ -51,9 +51,9 @@ public class Logic {
             grid[i][x] = true;
             colorGrid[i][x] = null;
         }
-    } // Clears the line by the received row number
+    } */ // Clears the line by the received row number
 
-    public void shiftDown(int x){
+    /*public void shiftDown(int x){
         if (x == -1) return;
 
         for (int i = x; i > 0; i--){
@@ -69,11 +69,9 @@ public class Logic {
         }
 
         render.redrawGrid(grid, colorGrid);
-    } // Gets the row number. Shifts everything above it one row down
+    } */ // Gets the row number. Shifts everything above it one row down
 
-    public boolean isAllowedDown(List<int[]> coordinates) {
-        getGrid();
-
+    public static boolean isAllowedDown(boolean[][] grid, List<int[]> coordinates) {
         for (int[] p : coordinates) {
             int row = p[0];
             int col = p[1] + 1;
@@ -85,35 +83,31 @@ public class Logic {
         return true;
     }
 
-    public boolean isAllowedRight(List<int[]> coordinates) {
-        getGrid();
-
+    public static boolean isAllowedRight(boolean[][] grid, List<int[]> coordinates) {
         for (int[] p : coordinates) {
             int row = p[0] + 1;
             int col = p[1];
 
-            if (row >= grid.length || !grid[row][col]){
+            if (row >= grid.length || !grid[row][col]) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean isAllowedLeft(List <int[]> coordinates){
-        getGrid();
-
+    public static boolean isAllowedLeft(boolean[][] grid, List <int[]> coordinates){
         for (int[] p : coordinates) {
             int row = p[0] - 1;
             int col = p[1];
 
-            if (row < 0 || !grid[row][col]){
+            if (row < 0 || !grid[row][col]) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean[][] getLogikMatrix(){
+    /*public boolean[][] getLogicMatrix(){
 
         int rows = render.getWidth() / render.getBlockSize();
         int cols = render.getHeight() / render.getBlockSize();
@@ -127,14 +121,14 @@ public class Logic {
         }
 
         return matrix;
-    } // Returns an empty logical matrix where "True" is an empty cell
+    }*/ // Returns an empty logical matrix where "True" is an empty cell
 
-    public boolean isGameOver(List<int[]> newFigure) {
+    public static boolean isGameOver(boolean[][] grid, List<int[]> newFigure) {
         for (int[] coord : newFigure) {
             int x = coord[0];
             int y = coord[1];
 
-            if (!grid[x][y]){
+            if (!grid[x][y]) {
                 return true;
             }
         }
