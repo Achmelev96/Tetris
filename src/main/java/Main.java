@@ -14,7 +14,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        Grid grid = new Grid(HEIGHT/BLOCK_SIZE, WIDTH/BLOCK_SIZE);
+        Grid grid = new Grid(HEIGHT / BLOCK_SIZE, WIDTH / BLOCK_SIZE);
 
         Render render = new Render(WIDTH, HEIGHT, BLOCK_SIZE);
         render.getCanvas();

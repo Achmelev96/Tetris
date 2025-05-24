@@ -18,17 +18,17 @@ public class ControlUnits {
     private final int GameSpeed = 800;
     private final int boost = 50;
     private boolean gameOver = false;
-    private boolean[][] gameGrid = grid.getGrid();;
+    private boolean[][] gameGrid;
     private List<int[]> figureCoordinates;
-    private Color[][] colorGrid = grid.getColors();;
+    private Color[][] colorGrid;
 
     public ControlUnits(Grid grid, Render render, Logic logic, Move move) {
         this.render = render;
         this.logic = logic;
         this.move = move;
         this.grid = grid;
-        //gameGrid = grid.getGrid();
-        //colorGrid = grid.getColors();
+        this.gameGrid = grid.getGrid();
+        this.colorGrid = grid.getColors();
     }
 
     public void keyPressed(KeyEvent event){
