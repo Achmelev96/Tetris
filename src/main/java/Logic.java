@@ -1,76 +1,11 @@
-
 import java.util.List;
-//import javafx.scene.paint.Color;
 
 public class Logic {
 
-    /*public boolean[][] grid;
-    private Render render;
-    private Color[][] colorGrid;*/
+    // Responsible for checking the availability of movement and the game-over conditions
 
-    // Responsible for checking, storing grids and block fixation
-    /*public Logic(Render render, int rows, int cols) {
-
-        this.render = render;
-        this.grid = getLogicMatrix();
-        this.colorGrid = new Color[rows][cols];
-
-    }*/
-
-    /*public boolean[][] getGrid() {
-        return grid;
-    }*/
-
-    /*public void resetGrid() { // Resetting the state of the grids
-        this.grid = getLogicMatrix();
-        this.colorGrid = new Color[grid.length][grid[0].length];
-    }*/
-
-    /*public void fixInGrid(List <int[]> coordinates, Color color){
-
-        for (int[] coord : coordinates){
-            int x = coord[0];
-            int y = coord[1];
-
-            grid[x][y] = false;
-            colorGrid[x][y] = color;
-        }
-
-        render.drawBlock(render.getCurrentCoordinates(), color);
-    } */ // fixes the figure in the grid
-
-    /*public Color[][] getColorGrid(){
-        return colorGrid;
-    }*/
-
-    /*public void clearLine(int x){
-
-        if (x == -1) return;
-
-        for (int i = 0; i < grid.length; i++){
-            grid[i][x] = true;
-            colorGrid[i][x] = null;
-        }
-    } */ // Clears the line by the received row number
-
-    /*public void shiftDown(int x){
-        if (x == -1) return;
-
-        for (int i = x; i > 0; i--){
-            for (int j = 0; j < grid.length; j++){
-                grid[j][i] = grid[j][i-1];
-                colorGrid[j][i] = colorGrid[j][i-1];
-            }
-        }
-
-        for (int j = 0; j < grid.length; j++){
-            grid [0][j] = true;
-            colorGrid[j][0] = null;
-        }
-
-        render.redrawGrid(grid, colorGrid);
-    } */ // Gets the row number. Shifts everything above it one row down
-
+    // For movement the following coordinates from the edge of the figures are checked.
+    // If at least one next cell is occupied or goes beyond the grid - return false
     public static boolean isAllowedDown(boolean[][] grid, List<int[]> coordinates) {
         for (int[] p : coordinates) {
             int row = p[0];
@@ -107,22 +42,8 @@ public class Logic {
         return true;
     }
 
-    /*public boolean[][] getLogicMatrix(){
-
-        int rows = render.getWidth() / render.getBlockSize();
-        int cols = render.getHeight() / render.getBlockSize();
-
-        boolean[][] matrix = new boolean[rows][cols];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                matrix[i][j] = true;
-            }
-        }
-
-        return matrix;
-    }*/ // Returns an empty logical matrix where "True" is an empty cell
-
+    // Game over check
+    // If the starting position is occupied - game over
     public static boolean isGameOver(boolean[][] grid, List<int[]> newFigure) {
         for (int[] coord : newFigure) {
             int x = coord[0];

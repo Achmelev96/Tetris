@@ -1,5 +1,4 @@
 // Tetris
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
@@ -19,10 +18,9 @@ public class Main extends Application {
         Render render = new Render(WIDTH, HEIGHT, BLOCK_SIZE);
         render.getCanvas();
 
-        Logic logic = new Logic();
         Move move = new Move();
         Scene scene = new Scene(render.getRoot(), WIDTH, HEIGHT);
-        ControlUnits controlUnits = new ControlUnits(grid, render, logic, move);
+        ControlUnits controlUnits = new ControlUnits(grid, render, move);
 
         primaryStage.setTitle("Tetris");
         primaryStage.setScene(scene);
@@ -33,7 +31,7 @@ public class Main extends Application {
         scene.setOnKeyPressed((KeyEvent event) -> controlUnits.keyPressed(event));
         scene.setOnKeyReleased((KeyEvent event) -> controlUnits.keyReleased(event));
 
-        primaryStage.setOnCloseRequest(event -> controlUnits.fallEnd());
+        primaryStage.setOnCloseRequest(_ -> controlUnits.fallEnd());
     }
 
     public static void main(String[] args) {

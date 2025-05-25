@@ -6,99 +6,124 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import java.util.List;
 
-// A set of control blocks that bring the program's functionality together
+/**
+ * The ControlUnits class serves as the central controller of the Tetris game.
+ *
+ * It coordinates the interaction between the rendering system, the game grid,
+ * and movement logic. This class is responsible for handling player input,
+ * controlling the figure's fall, checking and clearing filled lines,
+ * and managing game flow such as starting a new round or restarting after game over.
+ *
+ * Responsibilities include:
+ * <ul>
+ *     <li>Handling keyboard events (movement, rotation, acceleration, restart)</li>
+ *     <li>Initiating and controlling the automatic fall of the current figure</li>
+ *     <li>Locking the figure into the grid and starting a new round</li>
+ *     <li>Checking for and clearing fully filled lines</li>
+ *     <li>Resetting the game when it's over</li>
+ * </ul>
+ *
+ * This class acting as the glue that drives the overall gameplay logic.
+ */
+
 public class ControlUnits {
 
-    private Render render;
-    private Logic logic;
-    private Move move;
-    private Grid grid;
+    private final Render render;
+    private final Move move;
+    private final Grid grid;
     private Timeline timeline;
     private Color currentColor;
     private final int GameSpeed = 800;
     private final int boost = 50;
     private boolean gameOver = false;
-    private boolean[][] gameGrid;
+    private final boolean[][] gameGrid;
     private List<int[]> figureCoordinates;
-    private Color[][] colorGrid;
+    private final Color[][] colorGrid;
 
-    public ControlUnits(Grid grid, Render render, Logic logic, Move move) {
+    public ControlUnits(Grid grid, Render render, Move move) {
         this.render = render;
-        this.logic = logic;
         this.move = move;
         this.grid = grid;
         this.gameGrid = grid.getGrid();
         this.colorGrid = grid.getColors();
     }
 
+    /**
+     * Handles key presses during gameplay.
+     * LEFT / RIGHT / SPACE: move and rotate the figure.
+     * DOWN: temporarily accelerates the fall.
+     * ENTER: restarts the game after it ends.
+     */
     public void keyPressed(KeyEvent event){
-
-        render.drawBlock(render.getCurrentCoordinates(), Color.BLACK);
+        render.drawBlock(figureCoordinates, Color.BLACK);
 
         switch (event.getCode()) {
-            case LEFT -> {
-                figureCoordinates = move.figureMoveLeft(gameGrid, render.getCurrentCoordinates());
-                render.setCurrentCoordinates(figureCoordinates);
-            }
-            case RIGHT -> {
-                figureCoordinates = move.figureMoveRight(gameGrid, render.getCurrentCoordinates());
-                render.setCurrentCoordinates(figureCoordinates);
-            }
-            case SPACE -> {
-                figureCoordinates = move.rotate90(grid.getRows(), grid.getCols() ,render.getCurrentCoordinates());
-                render.setCurrentCoordinates(figureCoordinates);
-            }
+            case LEFT -> figureCoordinates = move.figureMoveLeft(gameGrid, figureCoordinates);
+            case RIGHT -> figureCoordinates = move.figureMoveRight(gameGrid, figureCoordinates);
+            case SPACE -> figureCoordinates = move.rotate90(grid.getRows(), grid.getCols(), figureCoordinates);
             case DOWN -> timeline.setRate(800.0 / boost);
             case ENTER -> restartGame();
-
         }
+        render.drawBlock(figureCoordinates, currentColor);
+    }
 
-        render.drawBlock(render.getCurrentCoordinates(), currentColor);
-    } // Control button block
-
+    // Returns speed to normal after releasing "DOWN"
     public void keyReleased(KeyEvent event){
         if (event.getCode() == KeyCode.DOWN && timeline != null) {
             timeline.setRate(800.0 / GameSpeed);
         }
-    } // Returns speed to normal after releasing "DOWN"
+    }
 
+    /**
+     * Starts the automatic falling animation for the current figure.
+     * The figure is moved downward at a regular interval. If it can no longer move down,
+     * the animation stops and the provided callback (onNextRound) is executed.
+     * @param onNextRound the action to run when the figure can no longer fall
+     */
     public void fallStart(Color color, int speed, Runnable onNextRound){
         this.currentColor = color;
 
-            timeline = new Timeline(new KeyFrame(Duration.millis(speed), event -> {
-                render.drawBlock(render.getCurrentCoordinates(), Color.BLACK);
+            timeline = new Timeline(new KeyFrame(Duration.millis(speed), _ -> {
+                render.drawBlock(figureCoordinates, Color.BLACK);
 
-                if (!Logic.isAllowedDown(gameGrid, render.getCurrentCoordinates())){
+                if (!Logic.isAllowedDown(gameGrid, figureCoordinates)){
                     timeline.stop();
                     onNextRound.run();
                     return;
                 }
                 figureCoordinates = move.figureMoveDown(gameGrid, figureCoordinates);
-                render.setCurrentCoordinates(figureCoordinates);
-                render.drawBlock(render.getCurrentCoordinates(), color);
+                render.drawBlock(figureCoordinates, color);
             }));
 
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
-    } // Responsible for the falling of figures down. If this is not possible, calls the next
+    }
 
+    // Stops the current Timeline-thread
     public void fallEnd(){
         if (timeline != null) {
             timeline.stop();
         }
-    } // Stops the current thread
+    }
 
+    /**
+     * Spawns a new random figure at the top of the grid and begins its descent.
+     *
+     * The method randomly selects a figure shape and color, computes its initial position,
+     * and places it on the game grid. If the newly spawned figure immediately collides with
+     * existing blocks, the game is considered over. In that case, the game is stopped and
+     * a "Game Over" message is shown. Otherwise, the figure starts falling via {@code fallStart}.
+     */
     public void startNewRound(){
-
         boolean[][] setFigure = Render.whichFigure(); // get a certain Figure
         List<int[]> figure = Render.getFigure(setFigure); // get coordinates for certain Figure
         Color color = Render.getColor(setFigure); // get a Color for certain Figure
 
         for (int[] i : figure){
-            i[0] = i[0] + (grid.getRows()/*(render.getWidth()/render.getBlockSize())*//2);
+            i[0] = i[0] + (grid.getRows()/2);
         }
 
-        if (logic.isGameOver(gameGrid,figure)){
+        if (Logic.isGameOver(gameGrid,figure)){
             gameOver = true;
             render.gameOver("GAME OVER", Color.WHITE);
             render.restart("Press ENTER to restart", Color.WHITE);
@@ -106,28 +131,34 @@ public class ControlUnits {
             return;
         }
 
-        render.setCurrentCoordinates(figure); // Saving the current coordinates
-        render.drawBlock(render.getCurrentCoordinates(), color);
+        figureCoordinates = figure;
+        render.drawBlock(figureCoordinates , color);
 
         fallStart(color, GameSpeed, this::nextRound);
-    } // launches a new figure and checks for game over
+    }
 
+    // Fixes the current figure, checks for filled rows and calls the next figure
     public void nextRound(){
-        grid.fixInGrid(render.getCurrentCoordinates(), currentColor);
-        render.drawBlock(render.getCurrentCoordinates(), currentColor);
+        grid.fixInGrid(figureCoordinates, currentColor);
+        render.drawBlock(figureCoordinates, currentColor);
         checkAndClear();
         startNewRound();
-    } // Fixes the current figure, checks for filled rows and calls the next figure
+    }
 
+    /**
+     * Checks for full lines in the grid and clears them.
+     * After each cleared line, shifts the rows above down and redraws the grid.
+     */
     private void checkAndClear(){
         int full;
-        while ((full = isLinefull(gameGrid/*logic.getGrid()*/)) != -1){
+        while ((full = isLineFull(gameGrid)) != -1){
             grid.clearLine(full);
             grid.shiftDown(full);
             render.redrawGrid(gameGrid, colorGrid);
         }
-    } // Filled Rows Check Block
+    }
 
+    // Restarts the game
     public void restartGame(){
         if (!gameOver) return;
 
@@ -135,10 +166,13 @@ public class ControlUnits {
         grid.setNewGrid();
         render.getCanvas();
         startNewRound();
-    } // Restarts the game
+    }
 
-    private int isLinefull(boolean[][] grid){
-
+    /** Auxiliary method for checkAndClear
+     * Checks for filled rows in the grid (all is false)
+     * @return index of a filled row or -1 if no rows are full.
+     */
+    private int isLineFull(boolean[][] grid){
         for (int i = grid[0].length - 1; i >= 0; i--) {
             boolean flag = true;
             for (int j = 0; j < grid.length; j++) {
@@ -150,5 +184,5 @@ public class ControlUnits {
             if (flag) return i;
         }
         return -1;
-    } // Auxiliary method for checkAndClear
+    }
 }

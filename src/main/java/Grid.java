@@ -1,18 +1,24 @@
 import javafx.scene.paint.Color;
-
 import java.util.List;
 
 public class Grid {
 
-    private boolean[][] grid;
-    private Color[][] colors;
+    /**
+     * The Grid class represents the game board as a Matrix of booleans and Matrix of Colors
+     * The grid is created once during initialization and is used further.
+     * Empty cells = True, filled cells = False
+     */
+
+    private final boolean[][] grid;
+    private final Color[][] colors;
 
     public Grid(int rows, int cols) {
-        this.grid = new boolean[rows][cols];
-        this.colors = new Color[rows][cols];
+        this.grid = new boolean[cols][rows];
+        this.colors = new Color[cols][rows];
         setNewGrid();
     }
 
+    // Clears the playing field: all cells become empty and colorless.
     public void setNewGrid(){
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
@@ -22,6 +28,7 @@ public class Grid {
         }
     }
 
+    // Fixes the figure into a grid, marking the cells as filled and colored
     public void fixInGrid(List<int[]> coordinates, Color color){
 
         for (int[] coord : coordinates){
@@ -31,9 +38,13 @@ public class Grid {
             grid[x][y] = false;
             colors[x][y] = color;
         }
-        //render.drawBlock(render.getCurrentCoordinates(), color);
     }
 
+    /**
+     * Shifts the entire grid from x down 1 cell
+     * used in conjunction with the method clearLine
+     * @param x line
+     */
     public void shiftDown(int x){
         if (x == -1) return;
 
@@ -48,9 +59,9 @@ public class Grid {
             grid [0][j] = true;
             colors[j][0] = null;
         }
-        //render.redrawGrid(grid, colorGrid);
     }
 
+    //Clears the entire line x
     public void clearLine(int x){
 
         if (x == -1) return;

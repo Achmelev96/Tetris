@@ -7,8 +7,8 @@ public class Move {
 
     public List<int[]> figureMoveDown(boolean[][] grid, List<int[]> coordinates) {
         if (Logic.isAllowedDown(grid, coordinates)) {
-            for (int[] newcord : coordinates) {
-                newcord[1] += 1;
+            for (int[] pointer : coordinates) {
+                pointer[1] += 1;
             }
         }
         return coordinates;
@@ -16,8 +16,8 @@ public class Move {
 
     public List<int[]> figureMoveRight(boolean[][] grid, List<int[]> coordinates) {
         if (Logic.isAllowedRight(grid, coordinates)) {
-            for (int[] newcord : coordinates) {
-                newcord[0] += 1;
+            for (int[] pointer : coordinates) {
+                pointer[0] += 1;
             }
         }
         return coordinates;
@@ -25,13 +25,15 @@ public class Move {
 
     public List<int[]> figureMoveLeft(boolean[][] grid, List<int[]> coordinates) {
         if (Logic.isAllowedLeft(grid, coordinates)) {
-            for (int[] newcord : coordinates) {
-                newcord[0] -= 1;
+            for (int[] pointer : coordinates) {
+                pointer[0] -= 1;
             }
         }
         return coordinates;
     }
 
+     // Rotates the given figure 90 degrees around its center.
+     // Adjusts coordinates to keep the figure within grid bounds.
     public List<int[]> rotate90(int rows, int cols, List<int[]> coordinates) {
 
         int[] center = findCenter(coordinates);
@@ -62,8 +64,8 @@ public class Move {
         int shiftX = 0;
         if (minX < 0) {
             shiftX = -minX;
-        } else if (maxX >= rows/*render.getWidth() / render.getBlockSize()*/) {
-            shiftX = (cols/*render.getWidth() / render.getBlockSize()*/ - 1) - maxX;
+        } else if (maxX >= rows) {
+            shiftX = (cols - 1) - maxX;
         }
 
         for (int i = 0; i < coordinates.size(); i++) {
@@ -74,8 +76,12 @@ public class Move {
         return coordinates;
     }
 
+    /**
+     * Auxiliary method for rotate90
+     * finds the approximate center of the figure
+     * @return 2 central points of the figure
+     */
     private int[] findCenter(List<int[]> coordinates) {
-
         int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
         int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
 
@@ -89,5 +95,5 @@ public class Move {
         int centerX = (minX + maxX) / 2;
         int centerY = (minY + maxY) / 2;
         return new int[] { centerX, centerY };
-    } // Auxiliary method for rotate90
+    }
 }
