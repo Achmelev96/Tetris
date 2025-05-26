@@ -31,3 +31,10 @@ It focuses on clean separation of concerns and was designed for learning purpose
 
 - **Initial version**: March 2025
 - **Refactoring completed**: May 2025
+
+## 🔧 How to Run
+
+The project uses JavaFX, which is automatically managed via Maven.
+
+- Install JavaFX
+- Run via Maven with the `javafx:run` parameter
